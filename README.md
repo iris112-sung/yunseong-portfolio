@@ -9,8 +9,11 @@ npm run dev
 
 Open the local URL printed by Vite. Production build: `npm run build`.
 UI verification (requires Google Chrome): `node scripts/check-ui.mjs`.
+Intro and carousel verification: `node scripts/check-experience.mjs`.
 
-Official React Bits components: BlurText, SpotlightCard and Magnet.
+The current experience uses the official React Bits LatticeLoader and
+FlexCarousel components, with a Three.js centerpiece and scroll-linked motion.
+Earlier React Bits components are retained in the source directory.
 Source revision and license are recorded in `src/components/react-bits/NOTICE.md`.
 
 ## Deployment

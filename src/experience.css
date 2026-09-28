@@ -1,0 +1,72 @@
+.page-loader{position:fixed;inset:0;z-index:200;background:#100e15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px}
+.loader-name{font:600 12px var(--font-emphasis);color:#9e91ac}
+.intro-experience{position:relative;height:240svh}
+.intro-stage{position:sticky;top:var(--header-height);height:calc(100svh - var(--header-height));min-height:400px;overflow:hidden;background:#100e15}
+.intro-art,.signature-sculpture{position:absolute;inset:0;width:100%;height:100%}
+.signature-sculpture canvas{display:block;width:100%;height:100%}
+.intro-statement{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;pointer-events:none}
+.intro-statement .eyebrow{color:#a99db7;font-size:11px;margin-bottom:26px}
+.intro-statement h1{font-size:88px;line-height:1.13;font-weight:800;letter-spacing:0;color:#faf7ff}
+.intro-statement h1 span{color:#be92f4}
+.intro-identity{font-family:var(--font-emphasis);font-size:21px;font-weight:600;margin-top:32px}
+.intro-identity span{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:#a494b6;margin-top:9px}
+.intro-edge{position:absolute;bottom:24px;left:48px;right:48px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-size:10px;color:#9c91a8}
+.intro-edge>span:last-child{text-align:right}
+.intro-next{border:1px solid #554364;border-radius:50%;width:46px;height:46px;color:#d7b8fc;background:#100e1566}
+.intro-next:hover{background:#2d1d40}
+.sculpture-fallback{display:grid;place-items:center;height:100%;font-family:var(--font-emphasis);font-size:180px;color:#c89bff}
+.main-entry{padding-block:80px;background:#100e15}
+.main-entry h2{font-size:48px}
+.main-role{font-size:12px;color:#ba8bed;margin-top:12px}
+.main-links{display:flex;gap:26px;align-items:center;margin-top:28px}
+.main-links a{display:flex;align-items:center;gap:7px;font-size:13px}
+.main-entry .lead{font-size:22px;font-weight:500}
+.gallery-canvas{height:480px;margin:12px -48px 0;position:relative}
+.gallery-loading{height:100%;display:grid;place-items:center}
+.gallery-fallback{display:block;width:100%;height:100%;object-fit:contain;padding:24px}
+.gallery-toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #352b40;padding:12px 0 20px}
+.project-tabs{display:flex;gap:22px}
+.project-tabs button{padding:10px 0;background:none;border:0;border-bottom:2px solid transparent;color:#92869d;font-family:var(--font-emphasis);font-weight:600;font-size:16px}
+.project-tabs button[aria-selected=true]{color:#e5cdfb;border-bottom-color:#b779f1}
+.gallery-arrows{display:flex;align-items:center;gap:12px}
+.gallery-arrows>span{font-size:11px;color:#9f91af;min-width:43px;text-align:center;font-variant-numeric:tabular-nums}
+.gallery-arrows .icon-button{border:1px solid #43334e;border-radius:50%}
+.selected-project{display:grid;grid-template-columns:1fr 1fr;gap:64px;padding-top:30px;min-height:260px}
+.selected-project-summary .eyebrow{margin-bottom:12px}
+.selected-project-summary h3{font-size:25px;line-height:1.35}
+.selected-project-summary>p:not(.eyebrow){font-size:13px;color:#b0a3be;margin-top:12px}
+.project-detail-button{display:inline-flex;align-items:center;gap:30px;border:0;border-bottom:1px solid #614577;padding:12px 0;background:none;color:#d6b5f5;margin-top:20px;font-size:13px}
+.selected-project .project-tech{margin:0}
+.selected-project .project-tech>div:first-child{border-top:0;padding-top:0}
+.selected-project .project-tech dd{font-size:13px;line-height:1.65}
+.is-reduced{height:calc(100svh - var(--header-height))}
+.is-reduced .intro-stage{position:relative;top:0}
+.is-reduced .intro-art{opacity:.22}
+.is-reduced .intro-edge{display:none}
+@media(min-width:1700px){.intro-statement h1{font-size:112px}.gallery-canvas{height:530px}}
+@media(max-width:1000px){.intro-statement h1{font-size:66px}.gallery-canvas{margin-inline:-28px}.selected-project{gap:32px}}
+@media(max-width:700px){
+ .intro-experience{height:220svh}
+ .intro-stage{min-height:360px}
+ .intro-statement h1{font-size:42px;line-height:1.2}
+ .intro-statement .eyebrow{font-size:8px;margin-bottom:22px}
+ .intro-identity{font-size:19px;margin-top:26px}
+ .intro-edge{left:22px;right:22px;bottom:22px;font-size:8px}
+ .intro-next{width:40px;height:40px}
+ .main-entry{padding-block:48px}
+ .main-entry h2{font-size:36px}
+ .main-entry .lead{font-size:19px}
+ .main-links{margin-top:20px;margin-bottom:10px}
+ .gallery-canvas{height:330px;margin-inline:-22px}
+ .gallery-toolbar{gap:12px;flex-wrap:wrap;padding-top:0}
+ .project-tabs{gap:20px}
+ .project-tabs button{font-size:15px}
+ .gallery-arrows{gap:7px}
+ .gallery-arrows .icon-button{height:34px;width:34px}
+ .gallery-arrows>span{font-size:10px;min-width:36px}
+ .selected-project{grid-template-columns:1fr;gap:26px;min-height:450px;padding-top:24px}
+ .selected-project-summary h3{font-size:23px}
+ .is-reduced{height:calc(100svh - var(--header-height))}
+}
+@media(max-width:360px){.intro-statement h1{font-size:36px}.project-tabs{gap:16px}.gallery-toolbar{justify-content:center}}
+@media(max-height:500px) and (min-width:701px){.intro-statement h1{font-size:42px}.intro-statement .eyebrow{margin-bottom:12px}.intro-identity{margin-top:14px}.intro-stage{min-height:300px}}

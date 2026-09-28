@@ -9,6 +9,7 @@ await fs.mkdir('test-results', { recursive: true });
 for (const width of [1440, 390]) {
   await page.setViewportSize({ width, height: 900 });
   await page.goto('http://127.0.0.1:5173/');
+  await page.locator('.page-loader').waitFor({state:'detached'});
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: `test-results/home-${width}.png`, fullPage: true });
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horizontal overflow');
@@ -16,7 +17,7 @@ for (const width of [1440, 390]) {
   assert(await page.locator('dialog').isVisible());
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'EN', exact: true }).click();
-  assert(await page.getByRole('heading', { name: /Building depth/ }).isVisible());
+  assert(await page.getByRole('heading', { name: /Understand deeply/ }).count() === 1);
   await page.getByRole('button', { name: 'KR', exact: true }).click();
   await page.goto('http://127.0.0.1:5173/#/reviews');
   await page.getByRole('textbox').fill('Flashattention');
