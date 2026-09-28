@@ -27,6 +27,15 @@ for(const [width,height] of [[1440,900],[390,844]]) {
  await page.evaluate(()=>window.scrollTo({top:innerHeight*0.75,behavior:'instant'}));
  await expect(page.locator('header')).toHaveCSS('opacity','1');
  await expect(page.locator('header')).toHaveCSS('filter','blur(0px)');
+ if(width>700){
+   const nav=await page.locator('header nav').boundingBox();
+   assert(Math.abs(nav.x+nav.width/2-width/2)<2,'Navigation is not centered');
+ }else{
+   await page.getByRole('button',{name:'Menu',exact:true}).click();
+   await expect(page.locator('header nav')).toBeVisible();
+   await page.screenshot({path:`test-results/navigation-${width}.png`});
+   await page.getByRole('button',{name:'Menu',exact:true}).click();
+ }
  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
  await expect(page.locator('header')).toHaveCSS('opacity','0');
  const canvas=page.locator('.signature-sculpture canvas');
@@ -44,6 +53,8 @@ for(const [width,height] of [[1440,900],[390,844]]) {
  await page.mouse.move(0,0);
  await page.getByRole('button',{name:'소개 문구 보기'}).click();
  await expect(page.locator('.intro-statement')).toHaveCSS('opacity','1',{timeout:5000});
+ await expect(page.locator('.intro-statement h1')).toContainText('더 깊이 이해하고,');
+ await expect(page.locator('.intro-statement h1')).toContainText('더 빠르게 구현한다.');
  await page.screenshot({path:`test-results/experience-statement-${width}.png`});
  await page.locator('#projects').scrollIntoViewIfNeeded();
  await page.waitForTimeout(2500);

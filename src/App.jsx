@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { ArrowUpRight, Github, X, Menu, Search, ArrowLeft } from 'lucide-react';
+import { ArrowUpRight, Github, X, Menu, Search, ArrowLeft, UserRound, FolderCode, BookOpen, Mail } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -81,7 +81,7 @@ export default function App() {
     <LoadingScreen ready={ready} lang={lang}/>
     <div className="app-shell" inert={!ready} aria-busy={!ready}>
     <a className="skip" href="#main">{ko ? '본문으로 이동' : 'Skip to content'}</a>
-    <ScrollHeader alwaysVisible={isBlog}><a className="wordmark" href="#/">Yunseong Bae<span> / AI ENGINEER</span></a><nav aria-label="Main navigation" className={menu ? 'open' : ''}><a href="#about">{ko ? '소개' : 'About'}</a><a href="#projects">{ko ? '프로젝트' : 'Projects'}</a><a href="#/reviews">{ko ? '논문 기록' : 'Reading'}</a><a href="#contact">{ko ? '연락' : 'Contact'}</a></nav><div className="header-actions"><div className="languages">{['ko','en'].map(l => <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}>{l === 'ko' ? 'KR' : 'EN'}</button>)}</div><button className="icon-button mobile-menu" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div></ScrollHeader>
+    <ScrollHeader alwaysVisible={isBlog}><a className="wordmark" href="#/">Yunseong Bae<span> / AI ENGINEER</span></a><nav aria-label="Main navigation" className={menu ? 'open' : ''}>{[{href:'#about',icon:UserRound,label:ko?'소개':'About'},{href:'#projects',icon:FolderCode,label:ko?'프로젝트':'Projects'},{href:'#/reviews',icon:BookOpen,label:ko?'논문 기록':'Reading'},{href:'#contact',icon:Mail,label:ko?'연락':'Contact'}].map(({href,icon:Icon,label})=><a key={href} href={href} aria-current={(href==='#/reviews'?isBlog:route===href)?'page':undefined}><Icon size={15}/><span>{label}</span></a>)}</nav><div className="header-actions"><div className="languages">{['ko','en'].map(l => <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}>{l === 'ko' ? 'KR' : 'EN'}</button>)}</div><button className="icon-button mobile-menu" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div></ScrollHeader>
     <main id="main">
     {isBlog ? <div className="archive container">
       <a className="back" href={article ? '#/reviews' : '#/'}><ArrowLeft size={16}/>{article ? 'Study Archive' : 'Portfolio'}</a>

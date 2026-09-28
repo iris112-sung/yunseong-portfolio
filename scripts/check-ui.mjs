@@ -17,7 +17,7 @@ for (const width of [1440, 390]) {
   assert(await page.locator('dialog').isVisible());
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'EN', exact: true }).click();
-  assert(await page.getByRole('heading', { name: /Understand deeply/ }).count() === 1);
+  assert(await page.getByRole('heading', { name: /Understand deeper/ }).count() === 1);
   await page.getByRole('button', { name: 'KR', exact: true }).click();
   await page.goto('http://127.0.0.1:5173/#/reviews');
   await page.getByRole('textbox').fill('Flashattention');
