@@ -1,0 +1,34 @@
+import { chromium } from '@playwright/test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+const browser = await chromium.launch({ channel: 'chrome', headless: true });
+const page = await browser.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+await fs.mkdir('test-results', { recursive: true });
+for (const width of [1440, 390]) {
+  await page.setViewportSize({ width, height: 900 });
+  await page.goto('http://127.0.0.1:5173/');
+  await page.evaluate(() => document.fonts.ready);
+  await page.screenshot({ path: `test-results/home-${width}.png`, fullPage: true });
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horizontal overflow');
+  await page.getByRole('button', { name: '자세히 보기' }).first().click();
+  assert(await page.locator('dialog').isVisible());
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  assert(await page.getByRole('heading', { name: /Building depth/ }).isVisible());
+  await page.getByRole('button', { name: 'KR', exact: true }).click();
+  await page.goto('http://127.0.0.1:5173/#/reviews');
+  await page.getByRole('textbox').fill('Flashattention');
+  assert.equal(await page.locator('.review-row').count(), 3);
+  await page.locator('.review-row').first().click();
+  await page.locator('.prose').waitFor();
+  await page.locator('.prose img').evaluateAll(imgs => imgs.forEach(img => img.loading = 'eager'));
+  await page.waitForFunction(() => [...document.querySelectorAll('.prose img')].every(img => img.complete));
+  assert(await page.locator('.prose img').evaluateAll(imgs => imgs.every(img => img.naturalWidth > 0)), 'Broken image');
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Article overflow');
+  await page.screenshot({ path: `test-results/article-${width}.png`, fullPage: true });
+}
+assert.deepEqual(errors, []);
+await browser.close();
+console.log('PASS: desktop/mobile layout, project dialog, language toggle, search, article images, runtime errors');
