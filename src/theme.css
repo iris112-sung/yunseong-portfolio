@@ -25,13 +25,15 @@ nav a:hover,.blue,.hero h1 span,.mail,.prose a,.review-row:hover h3{color:#c89bf
 @media(max-width:1000px){.hero{padding-inline:28px}.hero h1{font-size:3rem}.project.card-spotlight{padding:20px}}
 @media(max-width:700px){header{height:68px}nav{background:#15101d;border-color:#33263f}.hero{padding:66px 22px 0;min-height:610px}.hero h1{font-size:2rem}.hero:after{background:linear-gradient(180deg,#100e1550,#100e15c9 60%,#100e15)}.hero-scene{opacity:.85}.hero-intro{font-size:15px}.hero-bottom>p{color:#c5b9cf}.hero-footer{margin-top:60px}.section{padding-block:48px}.project.card-spotlight{padding:24px}.project h3{min-height:0}.project-tech dd{font-size:13px}.project-mark{height:115px}}
 
-/* Keep the animated hero and reading rhythm compact across screen sizes. */
-.hero{min-height:0;padding-top:64px}
+/* Fill the visible viewport while allowing content to grow on short screens. */
+:root{--header-height:76px}
+.hero{display:flex;flex-direction:column;min-height:calc(100vh - var(--header-height));min-height:calc(100dvh - var(--header-height));padding-top:40px}
 .hero h1{line-height:1.2}
-.hero .eyebrow{margin-bottom:18px}
+.hero .eyebrow{margin-top:auto;margin-bottom:18px}
 .hero-intro{margin:18px 0 24px;min-height:0;line-height:1.5;column-gap:0}
 .hero-bottom{justify-content:flex-start;align-items:center;gap:32px}
-.hero-footer{margin-top:38px;padding-block:18px}
+.hero-footer{margin-top:auto;padding-block:18px;position:relative;top:0}
+.hero-bottom{padding-bottom:38px}
 .section{padding-block:44px}
 .section-label{margin-bottom:24px}
 .about-grid{gap:40px}
@@ -57,11 +59,12 @@ nav a:hover,.blue,.hero h1 span,.mail,.prose a,.review-row:hover h3{color:#c89bf
 .prose{line-height:1.75}
 .prose p{margin-block:14px}
 @media(max-width:700px){
-  .hero{padding-top:40px;min-height:0}
+  :root{--header-height:68px}
+  .hero{padding-top:32px}
   .hero h1{line-height:1.25}
   .hero-intro{margin:15px 0 20px}
-  .hero-bottom{align-items:flex-start;gap:20px}
-  .hero-footer{margin-top:30px;padding-block:16px}
+  .hero-bottom{align-items:flex-start;gap:20px;padding-bottom:30px}
+  .hero-footer{margin-top:auto;padding-block:16px}
   .section{padding-block:32px}
   .section-label{margin-bottom:18px}
   .about-grid{gap:18px}
