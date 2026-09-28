@@ -10,7 +10,7 @@ class CarouselBoundary extends Component {
   render() { return this.state.failed ? this.props.fallback : this.props.children; }
 }
 
-export default function ProjectGallery({ projects, lang, reduced, onSelect, renderDetails }) {
+export default function ProjectGallery({ projects, lang, reduced, onSelect }) {
   const control = useRef(null);
   const [active, setActive] = useState(0);
   const [webgl, setWebgl] = useState(null);
@@ -42,7 +42,6 @@ export default function ProjectGallery({ projects, lang, reduced, onSelect, rend
     </div>
     <div className="selected-project" id="project-panel" role="tabpanel" aria-labelledby={`project-tab-${active}`}>
       <div className="selected-project-summary"><p className="eyebrow">{current.type}</p><h3>{current[lang][0]}</h3><p>{current[lang][1]}</p><button className="project-detail-button" onClick={()=>onSelect(current)} aria-haspopup="dialog">{ko ? '자세히 보기' : 'View project'}<ArrowUpRight size={18}/></button></div>
-      {renderDetails(current)}
     </div>
   </>;
 }

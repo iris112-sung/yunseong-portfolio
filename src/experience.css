@@ -52,20 +52,17 @@
 .gallery-arrows{display:flex;align-items:center;gap:12px}
 .gallery-arrows>span{font-size:11px;color:#9f91af;min-width:43px;text-align:center;font-variant-numeric:tabular-nums}
 .gallery-arrows .icon-button{border:1px solid #43334e;border-radius:50%}
-.selected-project{display:grid;grid-template-columns:1fr 1fr;gap:64px;padding-top:30px;min-height:260px}
+.selected-project{padding-top:30px;padding-bottom:10px}
 .selected-project-summary .eyebrow{margin-bottom:12px}
 .selected-project-summary h3{font-size:25px;line-height:1.35}
 .selected-project-summary>p:not(.eyebrow){font-size:13px;color:#b0a3be;margin-top:12px}
 .project-detail-button{display:inline-flex;align-items:center;gap:30px;border:0;border-bottom:1px solid #614577;padding:12px 0;background:none;color:#d6b5f5;margin-top:20px;font-size:13px}
-.selected-project .project-tech{margin:0}
-.selected-project .project-tech>div:first-child{border-top:0;padding-top:0}
-.selected-project .project-tech dd{font-size:13px;line-height:1.65}
 .is-reduced{height:100svh}
 .is-reduced .intro-stage{position:relative;top:0}
 .is-reduced .intro-art{opacity:.22}
 .is-reduced .intro-edge{display:none}
 @media(min-width:1700px){.intro-statement h1{font-size:112px}.gallery-canvas{height:530px}}
-@media(max-width:1000px){.intro-statement h1{font-size:66px}.gallery-canvas{margin-inline:-28px}.selected-project{gap:32px}}
+@media(max-width:1000px){.intro-statement h1{font-size:66px}.gallery-canvas{margin-inline:-28px}}
 @media(max-width:700px){
  .intro-experience{height:220svh}
  .intro-stage{min-height:360px}
@@ -85,7 +82,7 @@
  .gallery-arrows{gap:7px}
  .gallery-arrows .icon-button{height:34px;width:34px}
  .gallery-arrows>span{font-size:10px;min-width:36px}
- .selected-project{grid-template-columns:1fr;gap:26px;min-height:450px;padding-top:24px}
+ .selected-project{padding-top:24px}
  .selected-project-summary h3{font-size:23px}
  .is-reduced{height:100svh}
 }
