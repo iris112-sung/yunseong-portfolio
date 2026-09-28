@@ -5,7 +5,9 @@
 .archive.container{padding-top:calc(var(--header-height) + 36px)}
 .intro-stage{position:sticky;top:0;height:100svh;min-height:400px;overflow:hidden;background:#100e15}
 .intro-background{position:absolute;inset:0;opacity:.75}
-.intro-shards-surround{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;mask-image:radial-gradient(ellipse 48% 36% at 50% 50%,transparent 65%,#000 100%)}
+.intro-shards-surround{position:absolute;inset:0;pointer-events:none}
+.intro-art{z-index:1}
+.intro-statement,.intro-edge{z-index:2}
 .is-reduced .intro-shards-surround{opacity:.2}
 .intro-art,.signature-sculpture{position:absolute;inset:0;width:100%;height:100%}
 .signature-sculpture canvas{display:block;width:100%;height:100%}

@@ -36,6 +36,12 @@ for(const [width,height] of [[1440,900],[390,844]]) {
  assert(!first.equals(await canvas.screenshot()),'Static sculpture');
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  await page.screenshot({path:`test-results/experience-intro-${width}.png`});
+ await page.mouse.move(width*.65,height*.45);
+ await expect(page.locator('.black-hole-scene')).toHaveAttribute('data-pointer-active','true');
+ await page.waitForTimeout(500);
+ await page.screenshot({path:`test-results/experience-pointer-${width}.png`});
+ await expect(page.locator('.intro-shards-surround')).toHaveCSS('mask-image','none');
+ await page.mouse.move(0,0);
  await page.getByRole('button',{name:'소개 문구 보기'}).click();
  await expect(page.locator('.intro-statement')).toHaveCSS('opacity','1',{timeout:5000});
  await page.screenshot({path:`test-results/experience-statement-${width}.png`});
