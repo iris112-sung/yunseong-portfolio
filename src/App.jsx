@@ -8,6 +8,7 @@ import rehypeKatex from 'rehype-katex';
 import IntroExperience from './components/IntroExperience';
 import LoadingScreen from './components/LoadingScreen';
 import ProjectGallery from './components/ProjectGallery';
+import ScrollHeader from './components/ScrollHeader';
 import reviews from './reviews.json';
 import { projectDetails } from './projectDetails';
 
@@ -80,7 +81,7 @@ export default function App() {
     <LoadingScreen ready={ready} lang={lang}/>
     <div className="app-shell" inert={!ready} aria-busy={!ready}>
     <a className="skip" href="#main">{ko ? '본문으로 이동' : 'Skip to content'}</a>
-    <header><a className="wordmark" href="#/">Yunseong Bae<span> / AI ENGINEER</span></a><nav aria-label="Main navigation" className={menu ? 'open' : ''}><a href="#about">{ko ? '소개' : 'About'}</a><a href="#projects">{ko ? '프로젝트' : 'Projects'}</a><a href="#/reviews">{ko ? '논문 기록' : 'Reading'}</a><a href="#contact">{ko ? '연락' : 'Contact'}</a></nav><div className="header-actions"><div className="languages">{['ko','en'].map(l => <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}>{l === 'ko' ? 'KR' : 'EN'}</button>)}</div><button className="icon-button mobile-menu" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div></header>
+    <ScrollHeader alwaysVisible={isBlog}><a className="wordmark" href="#/">Yunseong Bae<span> / AI ENGINEER</span></a><nav aria-label="Main navigation" className={menu ? 'open' : ''}><a href="#about">{ko ? '소개' : 'About'}</a><a href="#projects">{ko ? '프로젝트' : 'Projects'}</a><a href="#/reviews">{ko ? '논문 기록' : 'Reading'}</a><a href="#contact">{ko ? '연락' : 'Contact'}</a></nav><div className="header-actions"><div className="languages">{['ko','en'].map(l => <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}>{l === 'ko' ? 'KR' : 'EN'}</button>)}</div><button className="icon-button mobile-menu" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div></ScrollHeader>
     <main id="main">
     {isBlog ? <div className="archive container">
       <a className="back" href={article ? '#/reviews' : '#/'}><ArrowLeft size={16}/>{article ? 'Study Archive' : 'Portfolio'}</a>

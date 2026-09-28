@@ -2,6 +2,7 @@ import { lazy, Suspense, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowDown } from 'lucide-react';
 const SignatureSculpture = lazy(() => import('./SignatureSculpture'));
+const AeroShards = lazy(() => import('./react-bits/AeroShards'));
 
 export default function IntroExperience({ lang, reduced, onReady }) {
   const ref = useRef(null);
@@ -15,6 +16,9 @@ export default function IntroExperience({ lang, reduced, onReady }) {
   const enter = () => window.scrollTo({ top: ref.current.offsetTop + (ref.current.offsetHeight - innerHeight) * 0.62, behavior: reduced ? 'instant' : 'smooth' });
   return <section ref={ref} className={`intro-experience${reduced ? ' is-reduced' : ''}`} aria-label={ko ? '배윤성 포트폴리오 인트로' : 'Yunseong Bae portfolio intro'}>
     <div className="intro-stage">
+      <motion.div className="intro-background" style={reduced ? {} : { opacity: sculptureOpacity }}>
+        <Suspense fallback={null}><AeroShards backgroundColor="#100e15" shardColor="#867b9e" accentColor="#91cdbf" placement="full" flow="ribbon" material="chrome" detail="bold" scale={1.3} density={0.8} shardSize={1.5} speed={0.55} bloom={0.2} grain={0.015} chromaticAberration={0.001} paused={reduced}/></Suspense>
+      </motion.div>
       <motion.div className="intro-art" style={reduced ? {} : { opacity: sculptureOpacity, scale: sculptureScale }}>
         <Suspense fallback={null}><SignatureSculpture reduced={reduced} onReady={onReady}/></Suspense>
       </motion.div>

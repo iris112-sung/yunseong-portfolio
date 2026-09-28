@@ -1,7 +1,10 @@
 .page-loader{position:fixed;inset:0;z-index:200;background:#100e15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px}
 .loader-name{font:600 12px var(--font-emphasis);color:#9e91ac}
 .intro-experience{position:relative;height:240svh}
-.intro-stage{position:sticky;top:var(--header-height);height:calc(100svh - var(--header-height));min-height:400px;overflow:hidden;background:#100e15}
+.scroll-header{position:fixed;inset:0 0 auto;z-index:40;will-change:opacity,filter,transform}
+.archive.container{padding-top:calc(var(--header-height) + 36px)}
+.intro-stage{position:sticky;top:0;height:100svh;min-height:400px;overflow:hidden;background:#100e15}
+.intro-background{position:absolute;inset:0;opacity:.75}
 .intro-art,.signature-sculpture{position:absolute;inset:0;width:100%;height:100%}
 .signature-sculpture canvas{display:block;width:100%;height:100%}
 .intro-statement{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 24px;pointer-events:none}
@@ -39,7 +42,7 @@
 .selected-project .project-tech{margin:0}
 .selected-project .project-tech>div:first-child{border-top:0;padding-top:0}
 .selected-project .project-tech dd{font-size:13px;line-height:1.65}
-.is-reduced{height:calc(100svh - var(--header-height))}
+.is-reduced{height:100svh}
 .is-reduced .intro-stage{position:relative;top:0}
 .is-reduced .intro-art{opacity:.22}
 .is-reduced .intro-edge{display:none}
@@ -66,7 +69,7 @@
  .gallery-arrows>span{font-size:10px;min-width:36px}
  .selected-project{grid-template-columns:1fr;gap:26px;min-height:450px;padding-top:24px}
  .selected-project-summary h3{font-size:23px}
- .is-reduced{height:calc(100svh - var(--header-height))}
+ .is-reduced{height:100svh}
 }
 @media(max-width:360px){.intro-statement h1{font-size:36px}.project-tabs{gap:16px}.gallery-toolbar{justify-content:center}}
 @media(max-height:500px) and (min-width:701px){.intro-statement h1{font-size:42px}.intro-statement .eyebrow{margin-bottom:12px}.intro-identity{margin-top:14px}.intro-stage{min-height:300px}}

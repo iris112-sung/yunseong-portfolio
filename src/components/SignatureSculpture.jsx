@@ -46,7 +46,7 @@ export default function SignatureSculpture({ reduced, onReady }) {
       const { width, height } = element.getBoundingClientRect();
       renderer.setSize(width, height);
       camera.aspect = width / Math.max(height, 1);
-      camera.position.z = 12 / Math.min(1, camera.aspect);
+      camera.position.z = (camera.aspect >= 1 ? 11.8 : 10.8) / Math.min(1, camera.aspect);
       camera.updateProjectionMatrix();
       renderer.render(scene, camera);
     };
