@@ -2,6 +2,7 @@ import { lazy, Suspense, useRef } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import { ArrowDown } from 'lucide-react';
 const BlackHoleScene = lazy(() => import('./BlackHoleScene'));
+const AeroShards = lazy(() => import('./react-bits/AeroShards'));
 
 export default function IntroExperience({ lang, reduced, onReady }) {
   const ref = useRef(null);
@@ -17,6 +18,9 @@ export default function IntroExperience({ lang, reduced, onReady }) {
     <div className="intro-stage">
       <motion.div className="intro-art" style={reduced ? {} : { opacity: sculptureOpacity, scale: sculptureScale }}>
         <Suspense fallback={null}><BlackHoleScene reduced={reduced} onReady={onReady}/></Suspense>
+      </motion.div>
+      <motion.div className="intro-shards-surround" style={reduced ? {} : { opacity: sculptureOpacity }}>
+        <Suspense fallback={null}><AeroShards backgroundColor="#000000" shardColor="#867b9e" accentColor="#91cdbf" placement="full" flow="ribbon" material="chrome" detail="bold" scale={1.3} density={0.8} shardSize={1.5} speed={0.55} bloom={0.2} grain={0} chromaticAberration={0.001} paused={reduced}/></Suspense>
       </motion.div>
       <motion.div className="intro-statement" style={reduced ? {} : { opacity: titleOpacity, y: titleY }}>
         <p className="eyebrow">FROM UNDERSTANDING TO BUILDING</p>
