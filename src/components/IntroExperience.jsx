@@ -24,7 +24,7 @@ export default function IntroExperience({ lang, reduced, onReady }) {
       </motion.div>
       <motion.div className="intro-statement" style={reduced ? {} : { opacity: titleOpacity, y: titleY }}>
         <p className="eyebrow">FROM UNDERSTANDING TO BUILDING</p>
-        <h1>{ko ? <>더 깊이 이해하고,<br/><span>더 빠르게 구현한다.</span></> : <>Understand deeper.<br/><span>Build faster.</span></>}</h1>
+        <h1>{ko ? <>더 깊이 이해하고,<br/><span>더 빠르게 구현합니다.</span></> : <>Understand deeper.<br/><span>Build faster.</span></>}</h1>
         <p className="intro-identity">{ko ? '배윤성' : 'Yunseong Bae'}<span>AI ENGINEER</span></p>
       </motion.div>
       <motion.div className="intro-edge" style={reduced ? {} : { opacity: cueOpacity }}><span>YUNSEONG BAE</span><button className="icon-button intro-next" onClick={enter} aria-label={ko ? '소개 문구 보기' : 'Reveal introduction'} title={ko ? '소개 문구 보기' : 'Reveal introduction'}><ArrowDown/></button><span>PORTFOLIO / 2026</span></motion.div>

@@ -1,4 +1,5 @@
 .page-loader{position:fixed;inset:0;z-index:200;background:#100e15;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:36px}
+.contact-linkedin{display:flex;align-items:center;gap:10px;width:fit-content;max-width:100%;margin-top:22px;padding-block:8px;border-bottom:1px solid #51445d;color:#c4b8d1;font-size:14px;transition:color .2s,border-color .2s}.contact-linkedin:hover{color:#f2e8ff;border-color:#c89bff}
 .loader-name{font:600 12px var(--font-emphasis);color:#9e91ac}
 .intro-experience{position:relative;height:240svh}
 .scroll-header{position:fixed;inset:0 0 auto;z-index:40;will-change:opacity,filter,transform}
