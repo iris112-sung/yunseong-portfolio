@@ -72,8 +72,9 @@ export default function App() {
       <section className="hero container">
         <div className="hero-scene"><AeroShards backgroundColor="#100e15" shardColor="#b89be8" accentColor="#a855f7" placement="right" flow="stream" speed={0.7} density={1.2} bloom={0.35} grain={0.025} paused={!!reduced}/></div>
         <p className="eyebrow">LLM MODELING / INFERENCE OPTIMIZATION</p>
-        <h1>{ko ? <>경험으로 깊이를 만드는<br/><span>AI 엔지니어 배윤성</span></> : <>Building depth.<br/><span>Through experience.</span></>}</h1>
-        {reduced ? <p className="hero-intro">{ko ? '모델을 이해하고, 더 효율적인 AI를 만듭니다.' : 'Yunseong Bae. Understanding models. Building efficient AI.'}</p> : <BlurText key={lang} text={ko ? '모델을 이해하고, 더 효율적인 AI를 만듭니다.' : 'Yunseong Bae. Understanding models. Building efficient AI.'} className="hero-intro" delay={55} direction="bottom" />}
+        <h1>{ko ? <>경험으로 깊이를 만드는<br/><span>AI 엔지니어</span></> : <>Building depth.<br/><span>Through experience.</span></>}</h1>
+        <p className="hero-name">{ko ? '배윤성' : 'Yunseong Bae'}</p>
+        {reduced ? <p className="hero-intro">{ko ? '모델을 이해하고, 더 효율적인 AI를 만듭니다.' : 'Understanding models. Building efficient AI.'}</p> : <BlurText key={lang} text={ko ? '모델을 이해하고, 더 효율적인 AI를 만듭니다.' : 'Understanding models. Building efficient AI.'} className="hero-intro" delay={55} direction="bottom" />}
         <div className="hero-bottom"><p>{ko ? 'LLM 모델링과 추론 최적화를 공부하며, 프로젝트와 논문 리뷰로 이해를 넓혀가고 있습니다.' : 'Exploring LLM modeling and inference optimization through hands-on projects and close reading.'}</p><div className="actions"><Magnet padding={20} magnetStrength={8} disabled={!!reduced}><a className="button primary" href="#projects">{ko ? '프로젝트 보기' : 'Explore projects'}<ArrowDown size={17}/></a></Magnet><a className="button" href="https://github.com/iris112-sung" target="_blank" rel="noopener noreferrer"><Github size={17}/>GitHub<ArrowUpRight size={16}/></a></div></div>
         <div className="hero-footer"><span>AI SOFTWARE STUDENT</span><span>BASED IN KOREA / 2026</span></div>
       </section>
