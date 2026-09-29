@@ -28,12 +28,9 @@
 .intro-statement .eyebrow:before,.intro-statement .eyebrow:after{content:'';width:32px;height:1px;background:linear-gradient(90deg,transparent,#e5faffad)}
 .intro-statement .eyebrow:after{transform:rotate(180deg)}
 .intro-statement h1{font-size:88px;line-height:1.13;font-weight:800;letter-spacing:0;filter:drop-shadow(0 16px 30px #05020ec9)}
-.intro-glass-line{display:block;position:relative;isolation:isolate;white-space:nowrap;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.7px #f3fcffb0;background:linear-gradient(112deg,#c8dfe3 0%,#fff 18%,#b9c3d0 31%,#fff 43%,#d2e4e6 61%,#fbfdff 76%,#b3bbcd 100%);background-size:180% 100%;-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 3px 1px #a9d6e448);animation:intro-glass-sheen 10s ease-in-out infinite alternate}
-.intro-glass-line:after{content:attr(data-text);position:absolute;inset:0;z-index:-1;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:1px #9fe9e867;transform:translate(2px,3px);filter:blur(1.5px)}
-.intro-glass-line--accent{margin-top:5px;-webkit-text-stroke:.7px #eac7ffeb;background-image:linear-gradient(112deg,#ad71e7 0%,#ebc7ff 18%,#b57af0 35%,#f6ddff 51%,#a96ce0 72%,#e9c7ff 100%);filter:drop-shadow(0 3px 1px #a45ddd70) drop-shadow(0 0 18px #8d4bd057)}
+.intro-glass-line{display:block;white-space:nowrap;color:transparent;-webkit-text-fill-color:transparent;background:linear-gradient(112deg,#c8dfe3 0%,#fff 18%,#b9c3d0 31%,#fff 43%,#d2e4e6 61%,#fbfdff 76%,#b3bbcd 100%);-webkit-background-clip:text;background-clip:text}
+.intro-glass-line--accent{margin-top:12px;background-image:linear-gradient(112deg,#ad71e7 0%,#ebc7ff 18%,#b57af0 35%,#f6ddff 51%,#a96ce0 72%,#e9c7ff 100%)}
 .intro-statement .intro-identity{color:#f2f7fc;text-shadow:0 2px 13px #080411,0 0 18px #b6c9ec55}
-@keyframes intro-glass-sheen{from{background-position:0 0}to{background-position:100% 0}}
-@media(prefers-reduced-motion:reduce){.intro-glass-line{animation:none}}
 .intro-identity{font-family:var(--font-emphasis);font-size:21px;font-weight:600;margin-top:32px}
 .intro-identity span{display:block;font-family:var(--font-body);font-size:10px;font-weight:400;color:#a494b6;margin-top:9px}
 .sculpture-fallback{display:grid;place-items:center;height:100%;font-family:var(--font-emphasis);font-size:180px;color:#c89bff}

@@ -24,7 +24,7 @@ export default function IntroExperience({ lang, reduced, onReady }) {
       </motion.div>
       <motion.div className="intro-statement" style={reduced ? { opacity: titleOpacity } : { opacity: titleOpacity, y: titleY, scale: titleScale, filter: titleFilter }}>
         <p className="eyebrow">FROM UNDERSTANDING TO BUILDING</p>
-        <h1>{ko ? <><span className="intro-glass-line" data-text="더 깊이 이해하고,">더 깊이 이해하고,</span><span className="intro-glass-line intro-glass-line--accent" data-text="더 빠르게 구현합니다.">더 빠르게 구현합니다.</span></> : <><span className="intro-glass-line" data-text="Understand deeper.">Understand deeper.</span><span className="intro-glass-line intro-glass-line--accent" data-text="Build faster.">Build faster.</span></>}</h1>
+        <h1>{ko ? <><span className="intro-glass-line">더 깊이 이해하고,</span><span className="intro-glass-line intro-glass-line--accent">더 빠르게 구현합니다.</span></> : <><span className="intro-glass-line">Understand deeper.</span><span className="intro-glass-line intro-glass-line--accent">Build faster.</span></>}</h1>
         <p className="intro-identity">{ko ? '배윤성' : 'Yunseong Bae'}<span>AI ENGINEER</span></p>
       </motion.div>
     </div>
