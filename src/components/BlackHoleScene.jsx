@@ -29,11 +29,20 @@ void main(){
    d.y*=1.8;
    field+=(.016+.006*sin(phase+time*.3))/(dot(d,d)+.004);
  }
- float core=smoothstep(.9,1.65,field);
- float glow=pow(clamp(field*.36,0.,1.),3.)*.48;
- float light=clamp(core+glow,0.,1.);
- vec3 tint=mix(vec3(.59,.53,.72),vec3(.16,.15,.21),core);
- gl_FragColor=vec4(tint,light*.9);
+ // Keep the field translucent so the shards remain visible through its surface.
+ float body=smoothstep(.72,1.8,field);
+ float shoulder=smoothstep(.62,1.05,field)*(1.-smoothstep(1.4,2.2,field));
+ float rim=exp(-pow((field-1.22)*8.,2.));
+ vec2 slope=vec2(dFdx(field),dFdy(field))*resolution;
+ vec2 normal=slope/max(length(slope),.0001);
+ float facing=dot(normal,normalize(vec2(-.6,.8)));
+ float reflection=pow(max(facing,0.),3.);
+ float shade=clamp(.5-facing*.5,0.,1.);
+ vec3 silver=mix(vec3(.49,.57,.52),vec3(.48,.43,.58),shade);
+ vec3 tint=mix(silver,vec3(.97,.98,.97),reflection*.65);
+ tint=mix(tint,vec3(.98,.99,.98),rim*reflection*.3);
+ float alpha=body*(.27+shade*.13)+shoulder*.02;
+ gl_FragColor=vec4(tint,clamp(alpha,0.,.42));
 }`;
 
 export default function BlackHoleScene({ reduced, onReady }) {
