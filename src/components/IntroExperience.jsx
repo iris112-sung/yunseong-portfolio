@@ -20,7 +20,7 @@ export default function IntroExperience({ lang, reduced, onReady }) {
         <Suspense fallback={null}><BlackHoleScene reduced={reduced} onReady={onReady}/></Suspense>
       </motion.div>
       <motion.div className="intro-shards-surround" style={reduced ? {} : { opacity: sculptureOpacity }}>
-        <Suspense fallback={null}><AeroShards backgroundColor="#000000" shardColor="#867b9e" accentColor="#91cdbf" placement="full" flow="ribbon" material="chrome" detail="bold" scale={1.3} density={0.8} shardSize={1.5} speed={0.55} bloom={0.2} grain={0} chromaticAberration={0.001} paused={reduced}/></Suspense>
+        <Suspense fallback={null}><AeroShards backgroundColor="#f7f8f6" shardColor="#708578" accentColor="#ac94c8" placement="full" flow="ribbon" material="chrome" detail="bold" scale={1.3} density={0.8} shardSize={1.5} speed={0.55} bloom={0.15} grain={0} chromaticAberration={0.001} paused={reduced}/></Suspense>
       </motion.div>
       <motion.div className="intro-statement" style={reduced ? { opacity: titleOpacity } : { opacity: titleOpacity, y: titleY, scale: titleScale, filter: titleFilter }}>
         <p className="eyebrow">FROM UNDERSTANDING TO BUILDING</p>

@@ -27,7 +27,7 @@ export default function ProjectGallery({ projects, lang, reduced }) {
   return <>
     <div className="gallery-canvas">
       {webgl === false ? fallback : webgl === null ? null : <CarouselBoundary fallback={fallback}>
-      <Suspense fallback={<div className="gallery-loading"><LatticeLoader label={ko ? '프로젝트 로딩' : 'Loading projects'} showTimer={false} color="#c89bff"/></div>}>
+      <Suspense fallback={<div className="gallery-loading"><LatticeLoader label={ko ? '프로젝트 로딩' : 'Loading projects'} showTimer={false} color="#7350ad"/></div>}>
         <FlexCarousel items={items} controlRef={control} intro={reduced ? 'fade' : 'rise'} preset="ribbon" cardHeight={0.78} gap={28} radius={8} fit="landscape" bend={reduced ? 0 : 0.14} dispersion={0.06} squeeze={0.08} captions={false} captureWheel={false} focusOnClick={false} onChange={setActive} onSelect={index => window.open(`#/projects/${projects[index].slug}`, '_blank', 'noopener,noreferrer')}/>
       </Suspense>
       </CarouselBoundary>}

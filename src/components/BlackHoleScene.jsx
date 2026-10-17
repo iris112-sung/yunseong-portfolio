@@ -32,7 +32,7 @@ void main(){
  float core=smoothstep(.9,1.65,field);
  float glow=pow(clamp(field*.36,0.,1.),3.)*.48;
  float light=clamp(core+glow,0.,1.);
- vec3 tint=mix(vec3(.70,.83,1.),vec3(1.),core);
+ vec3 tint=mix(vec3(.59,.53,.72),vec3(.16,.15,.21),core);
  gl_FragColor=vec4(tint,light*.9);
 }`;
 
