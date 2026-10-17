@@ -4,22 +4,27 @@ import fs from 'node:fs/promises';
 const browser = await chromium.launch({ channel: 'chrome', headless: true });
 const page = await browser.newPage();
 const errors = [];
+const url = process.env.TEST_URL || 'http://127.0.0.1:5173/';
 page.on('pageerror', e => errors.push(e.message));
 await fs.mkdir('test-results', { recursive: true });
 for (const width of [1440, 390]) {
   await page.setViewportSize({ width, height: 900 });
-  await page.goto('http://127.0.0.1:5173/');
+  await page.goto(url);
   await page.locator('.page-loader').waitFor({state:'detached'});
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: `test-results/home-${width}.png`, fullPage: true });
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horizontal overflow');
-  await page.getByRole('button', { name: '자세히 보기' }).first().click();
-  assert(await page.locator('dialog').isVisible());
-  await page.keyboard.press('Escape');
+  const projectPagePromise = page.waitForEvent('popup');
+  await page.locator('.project-detail-button').click();
+  const projectPage = await projectPagePromise;
+  await projectPage.locator('.case-hero h1').waitFor();
+  assert.equal(await projectPage.locator('.case-hero h1').innerText(), 'Run a B.');
+  assert.equal(await page.locator('dialog').count(), 0);
+  await projectPage.close();
   await page.getByRole('button', { name: 'EN', exact: true }).click();
   assert(await page.getByRole('heading', { name: /Understand deeper/ }).count() === 1);
   await page.getByRole('button', { name: 'KR', exact: true }).click();
-  await page.goto('http://127.0.0.1:5173/#/reviews');
+  await page.goto(`${url}#/reviews`);
   await page.getByRole('textbox').fill('Flashattention');
   assert.equal(await page.locator('.review-row').count(), 3);
   await page.locator('.review-row').first().click();
@@ -32,4 +37,4 @@ for (const width of [1440, 390]) {
 }
 assert.deepEqual(errors, []);
 await browser.close();
-console.log('PASS: desktop/mobile layout, project dialog, language toggle, search, article images, runtime errors');
+console.log('PASS: desktop/mobile layout, project new tab, language toggle, search, article images, runtime errors');

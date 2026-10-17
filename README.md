@@ -10,6 +10,13 @@ npm run dev
 Open the local URL printed by Vite. Production build: `npm run build`.
 UI verification (requires Google Chrome): `node scripts/check-ui.mjs`.
 Intro and carousel verification: `node scripts/check-experience.mjs`.
+Project case-study verification: `node scripts/check-project-pages.mjs`.
+Set `TEST_URL` to use a different local or deployed base URL.
+
+Project details open in a new tab at `#/projects/run-a-b`, `#/projects/reply`
+and `#/projects/speaki`. Each page includes a service-flow study, development
+notes, labeled troubleshooting, benchmark sources and next validation steps.
+Section URLs such as `#/projects/speaki/troubleshooting` support direct loading.
 
 The current experience uses the official React Bits LatticeLoader and
 FlexCarousel components, with a Three.js centerpiece and scroll-linked motion.
