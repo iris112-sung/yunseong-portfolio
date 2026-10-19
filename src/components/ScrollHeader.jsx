@@ -13,7 +13,12 @@ export default function ScrollHeader({ alwaysVisible, children }) {
   }, []);
   useMotionValueEvent(scrollY, 'change', y => setInteractive(y > 40));
   const opacity = useTransform(scrollY, [0, 40, height * 0.65], [0, 0, 1]);
-  const filter = useTransform(scrollY, [40, height * 0.65], ['blur(14px)', 'blur(0px)']);
+  const filter = useTransform(scrollY, value => {
+    // A lingering filter would prevent the menu from blurring the page behind it.
+    if (value >= height * 0.65) return 'none';
+    const progress = Math.max(0, (value - 40) / Math.max(height * 0.65 - 40, 1));
+    return `blur(${14 * (1 - progress)}px)`;
+  });
   const y = useTransform(scrollY, [0, height * 0.65], [-12, 0]);
   const visible = alwaysVisible || interactive;
   return <motion.header className="scroll-header" inert={!visible} aria-hidden={!visible}
@@ -22,5 +27,5 @@ export default function ScrollHeader({ alwaysVisible, children }) {
       filter: reduced ? 'none' : filter,
       y: reduced ? 0 : y,
       pointerEvents: visible ? 'auto' : 'none'
-    }}>{children}</motion.header>;
+    }}><div className="floating-navigation">{children}</div></motion.header>;
 }

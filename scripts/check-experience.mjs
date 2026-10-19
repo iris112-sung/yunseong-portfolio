@@ -22,11 +22,11 @@ for(const [width,height] of [[1440,900],[390,844]]) {
  await page.waitForTimeout(150);
  const partial=await page.locator('header').evaluate(el=>({opacity:Number(getComputedStyle(el).opacity),filter:getComputedStyle(el).filter}));
  assert(partial.opacity>0 && partial.opacity<1,'Header should fade in progressively');
- assert(partial.filter!=='blur(0px)','Header should be blurred mid-reveal');
+ assert(partial.filter.startsWith('blur(') && parseFloat(partial.filter.slice(5))>0,'Header should be blurred mid-reveal');
  await page.screenshot({path:`test-results/header-partial-${width}.png`});
  await page.evaluate(()=>window.scrollTo({top:innerHeight*0.75,behavior:'instant'}));
  await expect(page.locator('header')).toHaveCSS('opacity','1');
- await expect(page.locator('header')).toHaveCSS('filter','blur(0px)');
+ await expect(page.locator('header')).toHaveCSS('filter','none');
  if(width>700){
    const nav=await page.locator('header nav').boundingBox();
    assert(Math.abs(nav.x+nav.width/2-width/2)<2,'Navigation is not centered');
