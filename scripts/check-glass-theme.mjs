@@ -71,10 +71,11 @@ try {
     const floating = await page.locator('.floating-navigation').evaluate(element => {
       const style = getComputedStyle(element, '::before');
       const bounds = element.getBoundingClientRect();
-      return { blur: style.backdropFilter, background: style.backgroundImage, width: bounds.width, center: bounds.x + bounds.width / 2 };
+      return { blur: style.backdropFilter, background: style.backgroundImage, left: parseFloat(style.left), width: bounds.width, center: bounds.x + bounds.width / 2 };
     });
     assert(floating.blur.includes('blur') && floating.background.includes('linear-gradient'), 'Missing floating glass surface');
     assert(floating.width < width - 20 && Math.abs(floating.center - width / 2) < 1, 'Glass navigation must float in the center');
+    assert.equal(floating.left, width > 700 ? -16 : 0, 'Only the desktop name-side glass edge should extend to the left');
     await expect(page.locator('.rubber-segment__item').first()).toHaveCSS('font-size', width <= 700 ? '13px' : '14px');
     const typography = await page.locator('.about-copy>p').last().evaluate(element => {
       const style = getComputedStyle(element);
