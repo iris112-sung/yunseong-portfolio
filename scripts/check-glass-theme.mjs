@@ -14,7 +14,7 @@ await fs.mkdir('test-results', { recursive: true });
 
 async function checkLayout() {
   assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horizontal overflow');
-  const clipped = await page.locator('.contact-channels a, .project-tabs button, .rubber-segment__item').evaluateAll(elements => elements
+  const clipped = await page.locator('.contact-channels a, .contact-channels a>span, .project-tabs button, .rubber-segment__item').evaluateAll(elements => elements
     .filter(element => element.getClientRects().length && element.scrollWidth > element.clientWidth + 1)
     .map(element => element.textContent));
   assert.deepEqual(clipped, [], 'Clipped control text');
@@ -27,8 +27,35 @@ try {
     await page.locator('.page-loader').waitFor({ state: 'detached', timeout: 15000 });
     await expect(page.locator('#about')).toHaveCSS('opacity', '1');
     await expect(page.locator('.main-links a').first()).toHaveCSS('backdrop-filter', /blur/);
+    await expect(page.locator('.about-copy>p').last()).toHaveCSS('font-size', width <= 700 ? '15px' : width <= 1000 ? '17px' : '18px');
+    await expect(page.locator('#about h2')).toHaveCSS('font-weight', '750');
+    await expect(page.locator('.scroll-header')).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    await expect(page.locator('.rubber-segment__item').first()).toHaveCSS('font-size', width <= 700 ? '13px' : '14px');
+    const typography = await page.locator('.about-copy>p').last().evaluate(element => {
+      const style = getComputedStyle(element);
+      return { lineHeight: parseFloat(style.lineHeight) / parseFloat(style.fontSize), spacing: parseFloat(style.letterSpacing) || 0 };
+    });
+    assert(typography.lineHeight <= 1.7, 'Body leading should stay compact');
+    assert.equal(typography.spacing, 0, 'No added tracking');
     await checkLayout();
     await page.screenshot({ path: `test-results/glass-about-${width}.png` });
+    await page.getByRole('button', { name: 'EN', exact: true }).click();
+    const name = await page.locator('#about h2').evaluate(element => {
+      const style = getComputedStyle(element);
+      const context = document.createElement('canvas').getContext('2d');
+      context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
+      return { wordWidth: context.measureText('Yunseong').width, containerWidth: element.clientWidth };
+    });
+    assert(name.wordWidth <= name.containerWidth, 'The name should not break inside a word');
+    await checkLayout();
+    await page.screenshot({ path: `test-results/glass-about-en-${width}.png` });
+    if (width <= 700) {
+      await page.getByRole('button', { name: 'Menu', exact: true }).click();
+      await checkLayout();
+      await page.screenshot({ path: `test-results/glass-navigation-en-${width}.png` });
+      await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    }
+    await page.getByRole('button', { name: 'KR', exact: true }).click();
 
     await page.locator('#projects').scrollIntoViewIfNeeded();
     await expect(page.locator('#projects')).toHaveCSS('background-color', 'rgb(237, 241, 236)');
@@ -44,6 +71,7 @@ try {
     await page.locator('#contact').scrollIntoViewIfNeeded();
     await expect(page.locator('.contact-channels')).toBeVisible();
     await expect(page.locator('.contact-linkedin')).toHaveCSS('backdrop-filter', /blur/);
+    await expect(page.locator('.mail')).toHaveCSS('font-size', width <= 360 ? '20px' : width <= 1000 ? '22px' : '24px');
     await expect(page.locator('.mail')).toHaveAttribute('href', 'mailto:mineiris@naver.com');
     await checkLayout();
     await page.screenshot({ path: `test-results/glass-contact-${width}.png` });
