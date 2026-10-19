@@ -27,15 +27,14 @@ for(const [width,height] of [[1440,900],[390,844]]) {
  await page.evaluate(()=>window.scrollTo({top:innerHeight*0.75,behavior:'instant'}));
  await expect(page.locator('header')).toHaveCSS('opacity','1');
  await expect(page.locator('header')).toHaveCSS('filter','none');
- if(width>700){
-   const nav=await page.locator('header nav').boundingBox();
-   assert(Math.abs(nav.x+nav.width/2-width/2)<2,'Navigation is not centered');
- }else{
-   await page.getByRole('button',{name:'Menu',exact:true}).click();
-   await expect(page.locator('header nav')).toBeVisible();
-   await page.screenshot({path:`test-results/navigation-${width}.png`});
-   await page.getByRole('button',{name:'Menu',exact:true}).click();
- }
+ await expect(page.locator('header nav')).toBeVisible();
+ await expect(page.locator('header').getByRole('radio')).toHaveCount(4);
+ await expect(page.locator('header .wordmark,header .languages,header .mobile-menu')).toHaveCount(0);
+ const nav=await page.locator('header nav').boundingBox();
+ assert(Math.abs(nav.x+nav.width/2-width/2)<2,'Navigation is not centered');
+ const capsule=await page.locator('.floating-navigation').boundingBox();
+ assert(capsule.height<=44 && capsule.width<=380,'Navigation is not compact');
+ await page.screenshot({path:`test-results/navigation-${width}.png`});
  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
  await expect(page.locator('header')).toHaveCSS('opacity','0');
  const canvas=page.locator('.signature-sculpture canvas');
@@ -78,11 +77,12 @@ for(const [width,height] of [[1440,900],[390,844]]) {
  await page.locator('.project-detail-button').click();
  const reply=await replyPromise;
  await expect(reply.locator('.case-hero h1')).toHaveText('Reply.');
+ await reply.getByRole('button',{name:'EN',exact:true}).click();
+ await expect(reply.locator('.case-index')).toContainText('Overview');
+ await reply.getByRole('button',{name:'KR',exact:true}).click();
+ await expect(reply.locator('.case-index')).toContainText('개요');
  await reply.close();
  await page.screenshot({path:`test-results/experience-projects-${width}.png`});
- await page.getByRole('button',{name:'EN',exact:true}).click();
- await expect(page.locator('#project-panel h3')).toHaveText('A more thoughtful comment section');
- await page.getByRole('button',{name:'KR',exact:true}).click();
  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
  console.log(`PASS ${width}: sculpture pixels/motion, scroll reveal, carousel, tabs, keyboard, project pages, languages`);
 }

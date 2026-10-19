@@ -54,11 +54,6 @@ header { height: var(--header-height); background: #f7f8f6a6; border-color: #fff
   font-kerning: normal;
   text-rendering: optimizeLegibility;
 }
-.scroll-header .wordmark { font-size: 18px; font-weight: 700; }
-.scroll-header .wordmark span { font-size: 10px; }
-.scroll-header .languages { background: none; border-color: transparent; box-shadow: none; }
-.scroll-header .languages button { font-size: 11px; color: #776780; }
-.scroll-header .languages button[aria-pressed=true] { background: none; box-shadow: none; text-decoration: underline; text-underline-offset: 5px; }
 .main-entry, .contact { --section-glass-radius: 48px; }
 .main-entry::before, .contact::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; border: 1px solid #ffffffa6; border-radius: inherit; background: linear-gradient(90deg, #ffffff70, #ffffff14 56px, #ffffff0a 50%, #ffffff14 calc(100% - 56px), #ffffff70); box-shadow: inset 1px 0 0 #ffffffe0, inset -1px 0 0 #ffffffb8, inset 12px 0 24px #ffffff14, inset -12px 0 24px #ffffff14; backdrop-filter: blur(26px) saturate(1.2); -webkit-backdrop-filter: blur(26px) saturate(1.2); }
 .main-entry>.container, .contact>.container { position: relative; z-index: 1; }
@@ -137,7 +132,6 @@ footer a { color: #7b7184; }
   .section-title { align-items: flex-start; gap: 15px; margin-bottom: 21px; }
   .section-title h2 { max-width: 240px; }
   .section-title>a { padding-top: 7px; font-size: 9px; }
-  .scroll-header .wordmark { font-size: 17px; }
   .about-grid { grid-template-columns: 1fr; gap: 32px; }
   .main-entry, .contact { --section-glass-radius: 28px; }
   .about-copy>p:not(.lead) { font-size: 15px; line-height: 1.65; }
