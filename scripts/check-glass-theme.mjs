@@ -20,14 +20,6 @@ async function checkLayout() {
   assert.deepEqual(clipped, [], 'Clipped control text');
 }
 
-async function setLanguage(language, hash) {
-  await page.evaluate(value => localStorage.setItem('portfolio-language', value), language);
-  await page.reload();
-  await page.locator('.page-loader').waitFor({ state: 'detached', timeout: 15000 });
-  if (hash) await page.goto(`${url}${hash}`);
-  await expect(page.locator('html')).toHaveAttribute('lang', language);
-}
-
 async function checkRoundedGlass(selector, width) {
   await expect(page.locator(selector)).toHaveCSS('border-radius', width <= 700 ? '28px' : '48px');
   const surface = await page.locator(selector).evaluate(element => {
@@ -79,15 +71,11 @@ try {
     const floating = await page.locator('.floating-navigation').evaluate(element => {
       const style = getComputedStyle(element, '::before');
       const bounds = element.getBoundingClientRect();
-      return { blur: style.backdropFilter, background: style.backgroundImage, radius: parseFloat(style.borderRadius), height: bounds.height, width: bounds.width, center: bounds.x + bounds.width / 2 };
+      return { blur: style.backdropFilter, background: style.backgroundImage, width: bounds.width, center: bounds.x + bounds.width / 2 };
     });
     assert(floating.blur.includes('blur') && floating.background.includes('linear-gradient'), 'Missing floating glass surface');
     assert(floating.width < width - 20 && Math.abs(floating.center - width / 2) < 1, 'Glass navigation must float in the center');
-    assert(floating.width <= 380 && floating.height <= 44 && floating.radius >= floating.height / 2, 'Navigation should be a compact glass capsule');
-    await expect(page.locator('header .wordmark, header .languages, header .header-actions, header .mobile-menu')).toHaveCount(0);
-    await expect(page.locator('header').getByRole('radio')).toHaveCount(4);
-    await expect(page.locator('header nav')).toBeVisible();
-    await expect(page.locator('.rubber-segment__item').first()).toHaveCSS('font-size', '13px');
+    await expect(page.locator('.rubber-segment__item').first()).toHaveCSS('font-size', width <= 700 ? '13px' : '14px');
     const typography = await page.locator('.about-copy>p').last().evaluate(element => {
       const style = getComputedStyle(element);
       return { lineHeight: parseFloat(style.lineHeight) / parseFloat(style.fontSize), spacing: parseFloat(style.letterSpacing) || 0 };
@@ -96,18 +84,7 @@ try {
     assert.equal(typography.spacing, 0, 'No added tracking');
     await checkLayout();
     await page.screenshot({ path: `test-results/glass-about-${width}.png` });
-    await page.locator('header').getByRole('radio', { name: '프로젝트', exact: true }).click();
-    await expect(page).toHaveURL(/#projects$/);
-    await expect(page.locator('#projects h2')).toHaveText('문제에서 시작한 프로젝트');
-    await page.locator('header').getByRole('radio', { name: '논문 기록', exact: true }).click();
-    await expect(page).toHaveURL(/#\/reviews$/);
-    await expect(page.locator('.archive h1')).toContainText('Study Archive');
-    await page.locator('header').getByRole('radio', { name: '연락', exact: true }).click();
-    await expect(page).toHaveURL(/#contact$/);
-    await expect(page.locator('#contact h2')).toBeVisible();
-    await page.locator('header').getByRole('radio', { name: '소개', exact: true }).click();
-    await expect(page).toHaveURL(/#about$/);
-    await setLanguage('en');
+    await page.getByRole('button', { name: 'EN', exact: true }).click();
     const name = await page.locator('#about h2').evaluate(element => {
       const style = getComputedStyle(element);
       const context = document.createElement('canvas').getContext('2d');
@@ -117,10 +94,15 @@ try {
     assert(name.wordWidth <= name.containerWidth, 'The name should not break inside a word');
     await checkLayout();
     await page.screenshot({ path: `test-results/glass-about-en-${width}.png` });
-    await expect(page.locator('.scroll-header nav')).toHaveCSS('background-image', 'none');
-    await expect(page.locator('.scroll-header nav')).toHaveCSS('backdrop-filter', 'none');
-    await page.locator('.floating-navigation').screenshot({ path: `test-results/glass-navigation-en-${width}.png` });
-    await setLanguage('ko');
+    if (width <= 700) {
+      await page.getByRole('button', { name: 'Menu', exact: true }).click();
+      await expect(page.locator('.scroll-header nav')).toHaveCSS('background-image', 'none');
+      await expect(page.locator('.scroll-header nav')).toHaveCSS('backdrop-filter', 'none');
+      await checkLayout();
+      await page.screenshot({ path: `test-results/glass-navigation-en-${width}.png` });
+      await page.getByRole('button', { name: 'Menu', exact: true }).click();
+    }
+    await page.getByRole('button', { name: 'KR', exact: true }).click();
 
     await page.locator('#projects').scrollIntoViewIfNeeded();
     await expect(page.locator('#projects')).toHaveCSS('background-color', 'rgb(237, 241, 236)');
@@ -142,9 +124,9 @@ try {
     await expect(page.locator('.mail')).toHaveAttribute('href', 'mailto:mineiris@naver.com');
     await checkLayout();
     await page.screenshot({ path: `test-results/glass-contact-${width}.png` });
-    await setLanguage('en', '#contact');
+    await page.getByRole('button', { name: 'EN', exact: true }).click();
     await checkLayout();
-    await setLanguage('ko', '#contact');
+    await page.getByRole('button', { name: 'KR', exact: true }).click();
 
     await page.goto(`${url}#/reviews`);
     await expect(page.locator('.search')).toHaveCSS('backdrop-filter', /blur/);

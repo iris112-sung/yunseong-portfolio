@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ArrowUpRight, Github, Search, ArrowLeft, UserRound, FolderCode, BookOpen, Mail, Linkedin } from 'lucide-react';
+import { ArrowUpRight, Github, X, Menu, Search, ArrowLeft, UserRound, FolderCode, BookOpen, Mail, Linkedin } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -17,6 +17,7 @@ import { projects } from './projects';
 export default function App() {
   const [lang, setLang] = useState(() => { try { return localStorage.getItem('portfolio-language') === 'en' ? 'en' : 'ko'; } catch { return 'ko'; } });
   const [route, setRoute] = useState(location.hash);
+  const [menu, setMenu] = useState(false);
   const [query, setQuery] = useState('');
   const [sceneReady, setSceneReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
@@ -30,13 +31,14 @@ export default function App() {
     { value: '#contact', label: ko ? '연락' : 'Contact', icon: <Mail size={15} /> }
   ];
   const navigate = value => {
+    setMenu(false);
     if (location.hash === value) {
       document.getElementById(value.slice(1))?.scrollIntoView();
     } else {
       location.hash = value;
     }
   };
-  useEffect(() => { const listener = () => setRoute(location.hash); window.addEventListener('hashchange', listener); return () => window.removeEventListener('hashchange', listener); }, []);
+  useEffect(() => { const listener = () => { setRoute(location.hash); setMenu(false); }; window.addEventListener('hashchange', listener); return () => window.removeEventListener('hashchange', listener); }, []);
   useEffect(() => { document.documentElement.lang = lang; try { localStorage.setItem('portfolio-language', lang); } catch {} }, [lang]);
   const article = route.startsWith('#/reviews/') ? reviews.find(r => r.slug === route.split('/')[2]) : null;
   const isBlog = route.startsWith('#/reviews');
@@ -81,7 +83,8 @@ export default function App() {
     <div className="app-shell" inert={!ready} aria-busy={!ready}>
     <a className="skip" href="#main">{ko ? '본문으로 이동' : 'Skip to content'}</a>
     <ScrollHeader alwaysVisible={isBlog}>
-      <nav aria-label={ko ? '주요 탐색' : 'Main navigation'}>
+      <a className="wordmark" href="#/">Yunseong Bae<span> / AI ENGINEER</span></a>
+      <nav aria-label={ko ? '주요 탐색' : 'Main navigation'} className={menu ? 'open' : ''}>
         <RubberSegment
           items={navItems}
           value={selectedNav}
@@ -91,12 +94,13 @@ export default function App() {
           thumbColor="#ffffff59"
           textColor="#5e526b"
           activeTextColor="#382c49"
-          size="md"
+          size="lg"
           equalSlots={false}
-          radius={22}
+          radius={14}
           inset={3}
         />
       </nav>
+      <div className="header-actions"><div className="languages">{['ko','en'].map(l => <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}>{l === 'ko' ? 'KR' : 'EN'}</button>)}</div><button className="icon-button mobile-menu" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div>
     </ScrollHeader>
     <main id="main">
     {isBlog ? <div className="archive container">

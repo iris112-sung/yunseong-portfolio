@@ -20,14 +20,10 @@ for (const width of [1440, 390]) {
   await projectPage.locator('.case-hero h1').waitFor();
   assert.equal(await projectPage.locator('.case-hero h1').innerText(), 'Run a B.');
   assert.equal(await page.locator('dialog').count(), 0);
-  await projectPage.getByRole('button', { name: 'EN', exact: true }).click();
-  await projectPage.waitForFunction(() => document.documentElement.lang === 'en');
-  assert((await projectPage.locator('.case-index').innerText()).includes('Overview'));
-  await projectPage.getByRole('button', { name: 'KR', exact: true }).click();
-  await projectPage.waitForFunction(() => document.documentElement.lang === 'ko');
   await projectPage.close();
-  assert.equal(await page.locator('header .wordmark,header .languages,header .mobile-menu').count(), 0);
-  assert.equal(await page.locator('header [role=radio]').count(), 4);
+  await page.getByRole('button', { name: 'EN', exact: true }).click();
+  assert(await page.getByRole('heading', { name: /Understand deeper/ }).count() === 1);
+  await page.getByRole('button', { name: 'KR', exact: true }).click();
   await page.goto(`${url}#/reviews`);
   await page.getByRole('textbox').fill('Flashattention');
   assert.equal(await page.locator('.review-row').count(), 3);
