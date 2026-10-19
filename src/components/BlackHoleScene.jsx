@@ -38,11 +38,11 @@ void main(){
  float facing=dot(normal,normalize(vec2(-.6,.8)));
  float reflection=pow(max(facing,0.),3.);
  float shade=clamp(.5-facing*.5,0.,1.);
- vec3 silver=mix(vec3(.49,.57,.52),vec3(.48,.43,.58),shade);
- vec3 tint=mix(silver,vec3(.97,.98,.97),reflection*.65);
- tint=mix(tint,vec3(.98,.99,.98),rim*reflection*.3);
- float alpha=body*(.27+shade*.13)+shoulder*.02;
- gl_FragColor=vec4(tint,clamp(alpha,0.,.42));
+ vec3 graphite=mix(vec3(.105,.115,.13),vec3(.075,.06,.12),shade);
+ vec3 tint=mix(graphite,vec3(.62,.59,.69),reflection*.28);
+ tint=mix(tint,vec3(.78,.76,.83),rim*reflection*.16);
+ float alpha=body*(.62+shade*.12)+shoulder*.02;
+ gl_FragColor=vec4(tint,clamp(alpha,0.,.74));
 }`;
 
 export default function BlackHoleScene({ reduced, onReady }) {
