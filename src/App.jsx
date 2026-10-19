@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Github, X, Menu, Search, ArrowLeft, UserRound, FolderCode, BookOpen, Mail, Linkedin } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import Markdown from 'react-markdown';
@@ -14,6 +14,16 @@ import RubberSegment from './components/react-bits/RubberSegment/RubberSegment';
 import reviews from './reviews.json';
 import { projects } from './projects';
 
+function scrollToSection(hash, behavior) {
+  const target = document.getElementById(hash.slice(1));
+  if (!target) return;
+  // Reveal transforms must not shift the section's scroll destination.
+  let top = 0;
+  for (let element = target; element; element = element.offsetParent) top += element.offsetTop;
+  const padding = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+  window.scrollTo({ top: Math.max(0, top - padding), behavior });
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => { try { return localStorage.getItem('portfolio-language') === 'en' ? 'en' : 'ko'; } catch { return 'ko'; } });
   const [route, setRoute] = useState(location.hash);
@@ -21,6 +31,7 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [sceneReady, setSceneReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
+  const positionedView = useRef(null);
   const onSceneReady = useCallback(() => setSceneReady(true), []);
   const reduced = useReducedMotion();
   const ko = lang === 'ko';
@@ -30,20 +41,23 @@ export default function App() {
     { value: '#/reviews', label: ko ? '논문 기록' : 'Reading', icon: <BookOpen size={15} /> },
     { value: '#contact', label: ko ? '연락' : 'Contact', icon: <Mail size={15} /> }
   ];
-  const navigate = value => {
-    setMenu(false);
-    if (location.hash === value) {
-      document.getElementById(value.slice(1))?.scrollIntoView();
-    } else {
-      location.hash = value;
-    }
-  };
   useEffect(() => { const listener = () => { setRoute(location.hash); setMenu(false); }; window.addEventListener('hashchange', listener); return () => window.removeEventListener('hashchange', listener); }, []);
   useEffect(() => { document.documentElement.lang = lang; try { localStorage.setItem('portfolio-language', lang); } catch {} }, [lang]);
   const article = route.startsWith('#/reviews/') ? reviews.find(r => r.slug === route.split('/')[2]) : null;
   const isBlog = route.startsWith('#/reviews');
   const isProjectPage = route.startsWith('#/projects/');
   const caseProject = isProjectPage ? projects.find(project => project.slug === route.split('/')[2]) : null;
+  const navigate = value => {
+    setMenu(false);
+    const unchanged = location.hash === value;
+    if (!unchanged) {
+      history.pushState(null, '', value);
+      setRoute(value);
+    }
+    const behavior = reduced ? 'instant' : 'smooth';
+    if (!isBlog && !isProjectPage && !value.startsWith('#/')) scrollToSection(value, behavior);
+    else if (unchanged) window.scrollTo({ top: 0, behavior });
+  };
   useEffect(() => {
     document.documentElement.classList.toggle('is-project-page', isProjectPage);
     return () => document.documentElement.classList.remove('is-project-page');
@@ -65,16 +79,22 @@ export default function App() {
   useEffect(() => {
     document.title = caseProject ? `${caseProject.name} · Yunseong Bae` : article ? `${article.title} · Study Archive` : 'Yunseong Bae · AI Engineer';
     if (!ready) return;
-    requestAnimationFrame(() => {
+    const view = isProjectPage ? 'project' : isBlog ? 'archive' : 'portfolio';
+    const samePortfolio = view === 'portfolio' && positionedView.current === 'portfolio';
+    // In-page navigation already owns its scroll; do not interrupt it here.
+    if (samePortfolio && route !== '#/') return;
+    const frame = requestAnimationFrame(() => {
+      positionedView.current = view;
       if (isProjectPage) {
         const section = route.split('/')[3];
         const target = section ? document.getElementById(`case-${section}`) : null;
         if (target) target.scrollIntoView({ behavior: 'instant' });
         else window.scrollTo({ top: 0, behavior: 'instant' });
-      } else if (isBlog || route === '#/') window.scrollTo({ top: 0, behavior: 'instant' });
-      else if (route.startsWith('#')) document.getElementById(route.slice(1))?.scrollIntoView({ behavior: 'instant' });
+      } else if (isBlog || route === '#/') window.scrollTo({ top: 0, behavior: samePortfolio && !reduced ? 'smooth' : 'instant' });
+      else if (route.startsWith('#')) scrollToSection(route, 'instant');
     });
-  }, [route, article, isBlog, isProjectPage, caseProject, ready]);
+    return () => cancelAnimationFrame(frame);
+  }, [route, article, isBlog, isProjectPage, caseProject, ready, reduced]);
   const visibleReviews = reviews.filter(r => (r.title + r.body).toLowerCase().includes(query.toLowerCase()));
   const reviewLink = (r, i) => <a className="review-row" href={`#/reviews/${r.slug}`} key={r.slug}><span className="review-number">{String(i + 1).padStart(2,'0')}</span><div><div className="review-meta">{r.date} <span>{r.draft ? (ko ? '작성 중' : 'In progress') : 'REVIEW'}</span></div><h3>{r.title}</h3></div><ArrowUpRight /></a>;
   if (isProjectPage) return <><LoadingScreen ready={ready} lang={lang}/><ProjectCaseStudy key={caseProject?.slug || 'not-found'} project={caseProject} projects={projects} lang={lang} setLang={setLang} ready={ready}/></>;
@@ -102,7 +122,7 @@ export default function App() {
       </nav>
       <div className="header-actions"><div className="languages">{['ko','en'].map(l => <button key={l} onClick={() => setLang(l)} aria-pressed={lang === l}>{l === 'ko' ? 'KR' : 'EN'}</button>)}</div><button className="icon-button mobile-menu" aria-label="Menu" aria-expanded={menu} onClick={() => setMenu(!menu)}>{menu ? <X /> : <Menu />}</button></div>
     </ScrollHeader>
-    <main id="main">
+    <motion.main id="main" key={isBlog ? 'archive' : 'portfolio'} initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: reduced ? 0 : 0.2 }}>
     {isBlog ? <div className="archive container">
       <a className="back" href={article ? '#/reviews' : '#/'}><ArrowLeft size={16}/>{article ? 'Study Archive' : 'Portfolio'}</a>
       {article ? <><div className="article-heading"><p className="eyebrow">PAPER NOTES / {article.date}</p><h1>{article.title}</h1>{article.draft && <p className="draft-notice">{ko ? '작성 중인 학습 노트입니다. 현재까지 작성한 내용을 기록합니다.' : 'A work-in-progress reading note, preserved as written.'}</p>}</div><article className="prose"><Markdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]} components={{img: ({src,alt}) => <img src={src?.startsWith('/assets/') ? `.${src}` : src} alt={alt || article.title} loading="lazy" />}}>{article.body}</Markdown></article></> : <><p className="eyebrow">READ. QUESTION. UNDERSTAND.</p><h1>Study Archive<span className="blue">.</span></h1><p className="lead">{ko ? '논문을 읽고, 구조를 이해하고, 나의 언어로 남기는 기록.' : 'Reading papers. Understanding systems. Thinking in my own words.'}</p><label className="search"><Search size={19}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder={ko ? '제목이나 내용으로 검색' : 'Search titles or notes'} aria-label={ko ? '논문 검색' : 'Search papers'}/></label><p className="result-count">{visibleReviews.length} NOTES</p><div>{visibleReviews.map(reviewLink)}</div>{!visibleReviews.length && <p>{ko ? '검색 결과가 없습니다.' : 'No matching notes.'}</p>}</>}
@@ -129,7 +149,7 @@ export default function App() {
       <section className="section reading-section"><div className="container"><div className="section-label"><span>03 / READING NOTES</span><span>{reviews.length.toString().padStart(2,'0')} NOTES</span></div><div className="section-title"><h2>{ko ? '읽고, 질문하고, 기록합니다.' : 'Notes from the reading desk.'}</h2><a href="#/reviews">{ko ? '전체 기록' : 'All notes'}<ArrowUpRight size={18}/></a></div><div>{reviews.slice(0,3).map(reviewLink)}</div><a className="archive-link" href="https://iris112-sung.github.io/" target="_blank" rel="noopener noreferrer">Study Archive · GitHub Pages<ArrowUpRight size={16}/></a></div></section>
       <section id="contact" className="section contact"><div className="container"><p className="eyebrow">04 / GET IN TOUCH</p><h2>{ko ? '다음 아이디어를 함께.' : 'Start a conversation.'}</h2><p>{ko ? 'AI와 소프트웨어에 관한 이야기, 프로젝트와 협업을 기다립니다.' : 'Open to conversations about AI, software and collaboration.'}</p><div className="contact-channels"><a className="mail" href="mailto:mineiris@naver.com"><Mail size={19}/><span><small>EMAIL</small>mineiris@naver.com</span><ArrowUpRight/></a><a className="contact-linkedin" href="https://www.linkedin.com/in/yunseong-bae-9a964b35b/" target="_blank" rel="noopener noreferrer"><Linkedin size={19}/><span><small>LINKEDIN</small>Yunseong Bae</span><ArrowUpRight size={19}/></a></div></div></section>
     </>}
-    </main><footer className="container"><span>© 2026 Yunseong Bae</span><a href="https://github.com/iris112-sung" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={14}/></a></footer>
+    </motion.main><footer className="container"><span>© 2026 Yunseong Bae</span><a href="https://github.com/iris112-sung" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={14}/></a></footer>
     </div>
   </>;
 }
