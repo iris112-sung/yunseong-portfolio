@@ -79,8 +79,7 @@ header { height: var(--header-height); background: #f7f8f6a6; border-color: #fff
 .review-meta span { color: #88739e; }
 .archive-link { margin-top: 28px; font-size: 11px; }
 
-.contact { position: relative; isolation: isolate; overflow: clip; background: linear-gradient(115deg, #e4e9e6, #e9e4f1 55%, #edf0f4); }
-.contact::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(118deg, transparent 26%, #c1b7d557 26.1%, #d6cde95c 51%, #ffffff47 51.1%, #ffffff24 64%, transparent 64.1%), linear-gradient(28deg, transparent 62%, #a5bdb529 62.1%, #c4d4cd3d 82%, transparent 82.1%); }
+.contact { position: relative; isolation: isolate; overflow: clip; background: linear-gradient(90deg, #e9eeeb, #eeebf5 58%, #edf0f4); }
 .contact .eyebrow { margin-bottom: 25px; font-size: 11px; color: #70647c; }
 .contact h2 { max-width: 920px; font-size: 68px; line-height: 1.2; font-weight: 650; }
 .contact>div>p:not(.eyebrow) { color: #726778; font-size: 18px; line-height: 1.6; margin-top: 20px; }

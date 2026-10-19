@@ -25,8 +25,7 @@
 .is-reduced { height: 180svh; }
 .is-reduced .intro-shards-surround, .is-reduced .intro-art { opacity: .22; }
 
-.main-entry { position: relative; isolation: isolate; overflow: clip; background: linear-gradient(115deg, #eef1ed, #ebe7f1 62%, #e9efed); }
-.main-entry::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: linear-gradient(122deg, transparent 19%, #c9bfd854 19.1%, #e2d8ef52 43%, #ffffff3b 43.1%, #ffffff21 73%, transparent 73.1%); }
+.main-entry { position: relative; isolation: isolate; overflow: clip; background: linear-gradient(90deg, #eef1ed, #ebe7f1 62%, #e9efed); }
 .main-entry h2 { font-size: 76px; line-height: 1.12; font-weight: 750; }
 .main-entry .section-label { margin-bottom: 62px; font-size: 11px; color: #756b7d; }
 .main-entry .main-role { font-size: 13px; line-height: 1.4; font-weight: 500; color: #846a98; margin-top: 15px; }

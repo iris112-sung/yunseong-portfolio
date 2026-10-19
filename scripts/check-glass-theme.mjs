@@ -26,6 +26,7 @@ try {
     await page.goto(`${url}#about`);
     await page.locator('.page-loader').waitFor({ state: 'detached', timeout: 15000 });
     await expect(page.locator('#about')).toHaveCSS('opacity', '1');
+    assert.equal(await page.locator('#about').evaluate(element => getComputedStyle(element, '::before').content), 'none', 'No diagonal background layer in About');
     await expect(page.locator('.main-links a').first()).toHaveCSS('backdrop-filter', /blur/);
     await expect(page.locator('.about-copy>p').last()).toHaveCSS('font-size', width <= 700 ? '15px' : width <= 1000 ? '17px' : '18px');
     await expect(page.locator('#about h2')).toHaveCSS('font-weight', '750');
@@ -70,6 +71,7 @@ try {
 
     await page.locator('#contact').scrollIntoViewIfNeeded();
     await expect(page.locator('.contact-channels')).toBeVisible();
+    assert.equal(await page.locator('#contact').evaluate(element => getComputedStyle(element, '::before').content), 'none', 'No diagonal background layer in Contact');
     await expect(page.locator('.contact-linkedin')).toHaveCSS('backdrop-filter', /blur/);
     await expect(page.locator('.mail')).toHaveCSS('font-size', width <= 360 ? '20px' : width <= 1000 ? '22px' : '24px');
     await expect(page.locator('.mail')).toHaveAttribute('href', 'mailto:mineiris@naver.com');
