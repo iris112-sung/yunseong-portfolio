@@ -76,7 +76,7 @@ try {
     assert(floating.blur.includes('blur') && floating.background.includes('linear-gradient'), 'Missing floating glass surface');
     assert(floating.width < width - 20 && Math.abs(floating.center - width / 2) < 1, 'Glass navigation must float in the center');
     assert.equal(floating.left, width > 700 ? -16 : 0, 'Only the desktop name-side glass edge should extend to the left');
-    await expect(page.locator('.scroll-header .rubber-segment__thumb')).toHaveCSS('background-color', 'rgba(105, 75, 130, 0.94)');
+    await expect(page.locator('.scroll-header .rubber-segment__thumb')).toHaveCSS('background-color', 'rgba(105, 75, 130, 0.87)');
     await expect(page.locator('.scroll-header .rubber-segment__thumb')).toHaveCSS('color', 'rgb(255, 255, 255)');
     await expect(page.locator('.rubber-segment__item').first()).toHaveCSS('font-size', width <= 700 ? '13px' : '14px');
     const typography = await page.locator('.about-copy>p').last().evaluate(element => {

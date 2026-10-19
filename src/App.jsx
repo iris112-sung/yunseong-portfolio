@@ -91,7 +91,7 @@ export default function App() {
           onChange={navigate}
           aria-label={ko ? '페이지 이동' : 'Page navigation'}
           trackColor="#ffffff18"
-          thumbColor="#694b82f0"
+          thumbColor="#694b82de"
           textColor="#5e526b"
           activeTextColor="#ffffff"
           size="lg"
