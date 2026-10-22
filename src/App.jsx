@@ -27,11 +27,13 @@ function scrollToSection(hash, behavior) {
 export default function App() {
   const [lang, setLang] = useState(() => { try { return localStorage.getItem('portfolio-language') === 'en' ? 'en' : 'ko'; } catch { return 'ko'; } });
   const [route, setRoute] = useState(location.hash);
+  const [activeSection, setActiveSection] = useState('#about');
   const [menu, setMenu] = useState(false);
   const [query, setQuery] = useState('');
   const [sceneReady, setSceneReady] = useState(false);
   const [fontsReady, setFontsReady] = useState(false);
   const positionedView = useRef(null);
+  const scrollTarget = useRef(null);
   const onSceneReady = useCallback(() => setSceneReady(true), []);
   const reduced = useReducedMotion();
   const ko = lang === 'ko';
@@ -49,20 +51,23 @@ export default function App() {
   const caseProject = isProjectPage ? projects.find(project => project.slug === route.split('/')[2]) : null;
   const navigate = value => {
     setMenu(false);
+    const inPage = !isBlog && !isProjectPage && !value.startsWith('#/');
+    scrollTarget.current = inPage && !reduced ? { value, expires: performance.now() + 2000 } : null;
+    if (!value.startsWith('#/')) setActiveSection(value);
     const unchanged = location.hash === value;
     if (!unchanged) {
       history.pushState(null, '', value);
       setRoute(value);
     }
     const behavior = reduced ? 'instant' : 'smooth';
-    if (!isBlog && !isProjectPage && !value.startsWith('#/')) scrollToSection(value, behavior);
+    if (inPage) scrollToSection(value, behavior);
     else if (unchanged) window.scrollTo({ top: 0, behavior });
   };
   useEffect(() => {
     document.documentElement.classList.toggle('is-project-page', isProjectPage);
     return () => document.documentElement.classList.remove('is-project-page');
   }, [isProjectPage]);
-  const selectedNav = isBlog ? '#/reviews' : navItems.some(item => item.value === route) ? route : '#about';
+  const selectedNav = isBlog ? '#/reviews' : activeSection;
   const ready = fontsReady && (sceneReady || isBlog || isProjectPage);
   useEffect(() => {
     let active = true;
@@ -95,6 +100,50 @@ export default function App() {
     });
     return () => cancelAnimationFrame(frame);
   }, [route, article, isBlog, isProjectPage, caseProject, ready, reduced]);
+  useEffect(() => {
+    if (!ready || isBlog || isProjectPage) return;
+    const sections = [['about', '#about'], ['projects', '#projects'], ['reading', '#/reviews'], ['contact', '#contact']]
+      .map(([id, value]) => ({ element: document.getElementById(id), value }))
+      .filter(section => section.element);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const marker = Math.min(innerHeight * 0.35, 320);
+      let active = '#about';
+      for (const section of sections) {
+        if (section.element.getBoundingClientRect().top <= marker) active = section.value;
+      }
+      if (scrollY > 0 && scrollY + innerHeight >= document.documentElement.scrollHeight - 2) active = '#contact';
+      // Keep the clicked destination stable while smooth scrolling past other sections.
+      const pending = scrollTarget.current;
+      if (pending && pending.value !== active && performance.now() < pending.expires) return;
+      scrollTarget.current = null;
+      setActiveSection(active);
+    };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+    const interrupt = () => { scrollTarget.current = null; schedule(); };
+    const onKeyDown = event => {
+      if (!event.defaultPrevented && ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' '].includes(event.key)) interrupt();
+    };
+    const observer = new ResizeObserver(schedule);
+    sections.forEach(section => observer.observe(section.element));
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    window.addEventListener('scrollend', interrupt);
+    window.addEventListener('keydown', onKeyDown);
+    for (const type of ['wheel', 'touchstart', 'pointerdown']) window.addEventListener(type, interrupt, { passive: true });
+    schedule();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      scrollTarget.current = null;
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      window.removeEventListener('scrollend', interrupt);
+      window.removeEventListener('keydown', onKeyDown);
+      for (const type of ['wheel', 'touchstart', 'pointerdown']) window.removeEventListener(type, interrupt);
+    };
+  }, [ready, isBlog, isProjectPage]);
   const visibleReviews = reviews.filter(r => (r.title + r.body).toLowerCase().includes(query.toLowerCase()));
   const reviewLink = (r, i) => <a className="review-row" href={`#/reviews/${r.slug}`} key={r.slug}><span className="review-number">{String(i + 1).padStart(2,'0')}</span><div><div className="review-meta">{r.date} <span>{r.draft ? (ko ? '작성 중' : 'In progress') : 'REVIEW'}</span></div><h3>{r.title}</h3></div><ArrowUpRight /></a>;
   if (isProjectPage) return <><LoadingScreen ready={ready} lang={lang}/><ProjectCaseStudy key={caseProject?.slug || 'not-found'} project={caseProject} projects={projects} lang={lang} setLang={setLang} ready={ready}/></>;
@@ -146,7 +195,7 @@ export default function App() {
         </div>
       </motion.section>
       <section id="projects" className="section project-section"><div className="container"><div className="section-label"><span>02 / SELECTED WORK</span><span>03 PROJECTS</span></div><h2>{ko ? '문제에서 시작한 프로젝트' : 'Ideas, put into practice.'}</h2><ProjectGallery projects={projects} lang={lang} reduced={!!reduced}/></div></section>
-      <section className="section reading-section"><div className="container"><div className="section-label"><span>03 / READING NOTES</span><span>{reviews.length.toString().padStart(2,'0')} NOTES</span></div><div className="section-title"><h2>{ko ? '읽고, 질문하고, 기록합니다.' : 'Notes from the reading desk.'}</h2><a href="#/reviews">{ko ? '전체 기록' : 'All notes'}<ArrowUpRight size={18}/></a></div><div>{reviews.slice(0,3).map(reviewLink)}</div><a className="archive-link" href="https://iris112-sung.github.io/" target="_blank" rel="noopener noreferrer">Study Archive · GitHub Pages<ArrowUpRight size={16}/></a></div></section>
+      <section id="reading" className="section reading-section"><div className="container"><div className="section-label"><span>03 / READING NOTES</span><span>{reviews.length.toString().padStart(2,'0')} NOTES</span></div><div className="section-title"><h2>{ko ? '읽고, 질문하고, 기록합니다.' : 'Notes from the reading desk.'}</h2><a href="#/reviews">{ko ? '전체 기록' : 'All notes'}<ArrowUpRight size={18}/></a></div><div>{reviews.slice(0,3).map(reviewLink)}</div><a className="archive-link" href="https://iris112-sung.github.io/" target="_blank" rel="noopener noreferrer">Study Archive · GitHub Pages<ArrowUpRight size={16}/></a></div></section>
       <section id="contact" className="section contact"><div className="container"><p className="eyebrow">04 / GET IN TOUCH</p><h2>{ko ? '다음 아이디어를 함께.' : 'Start a conversation.'}</h2><p>{ko ? 'AI와 소프트웨어에 관한 이야기, 프로젝트와 협업을 기다립니다.' : 'Open to conversations about AI, software and collaboration.'}</p><div className="contact-channels"><a className="mail" href="mailto:mineiris@naver.com"><Mail size={19}/><span><small>EMAIL</small>mineiris@naver.com</span><ArrowUpRight/></a><a className="contact-linkedin" href="https://www.linkedin.com/in/yunseong-bae-9a964b35b/" target="_blank" rel="noopener noreferrer"><Linkedin size={19}/><span><small>LINKEDIN</small>Yunseong Bae</span><ArrowUpRight size={19}/></a></div></div></section>
     </>}
     </motion.main><footer className="container"><span>© 2026 Yunseong Bae</span><a href="https://github.com/iris112-sung" target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={14}/></a></footer>
