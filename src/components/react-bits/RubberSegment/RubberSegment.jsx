@@ -127,13 +127,6 @@ export default function RubberSegment({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [listKey, size, inset, equalSlots]);
 
-  useEffect(() => {
-    if (!drag.current && committed.current !== index) {
-      committed.current = index;
-      jumpTo(index);
-    }
-  });
-
   useEffect(
     () => () => {
       clearTimeout(handoff.current);
@@ -174,6 +167,17 @@ export default function RubberSegment({
       if (gen.current === g) animate(trail, trailTo, { ...SPRING_RELAX, duration: t(0.16) });
     });
   };
+
+  useEffect(() => {
+    if (!drag.current && committed.current !== index) {
+      committed.current = index;
+      if (reduce) jumpTo(index);
+      else {
+        clearTimeout(handoff.current);
+        land(index, null, false, false);
+      }
+    }
+  });
 
   const travel = (from, to) => {
     const a = slots.current[from];

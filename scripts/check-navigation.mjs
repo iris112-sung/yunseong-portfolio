@@ -19,9 +19,13 @@ async function settledAt(selector) {
   await expect.poll(async () => Math.abs(await page.evaluate(() => scrollY) - await destination(selector)), { timeout: 8000 }).toBeLessThan(3);
 }
 
-async function choose(name) {
+async function openNavigation() {
   const menu = page.getByRole('button', { name: 'Menu', exact: true });
   if (await menu.isVisible() && await menu.getAttribute('aria-expanded') === 'false') await menu.click();
+}
+
+async function choose(name) {
+  await openNavigation();
   await page.getByRole('radio', { name, exact: true }).click();
 }
 
@@ -40,6 +44,52 @@ async function manualScroll(selector, name, wheel = false) {
   await settledAt(selector);
   await selected(name);
   assert.deepEqual(await page.evaluate(() => ({ hash: location.hash, history: history.length })), { hash: before.hash, history: before.history }, 'Scroll tracking must not navigate or add history entries');
+}
+
+async function thumbAligned() {
+  await openNavigation();
+  await expect.poll(() => page.evaluate(() => {
+    const thumb = window.readNavigationThumb();
+    return Math.max(Math.abs(thumb.left - thumb.expectedLeft), Math.abs(thumb.right - thumb.expectedRight));
+  }), { timeout: 3000 }).toBeLessThan(0.75);
+}
+
+async function animatedScroll(selector, name, wheel = false) {
+  await openNavigation();
+  await page.evaluate(() => {
+    window.readNavigationThumb = () => {
+      const track = document.querySelector('.scroll-header .rubber-segment');
+      const thumb = track.querySelector('.rubber-segment__thumb');
+      const selected = track.querySelector('[aria-checked=true]').getBoundingClientRect();
+      const bounds = track.getBoundingClientRect();
+      const padding = parseFloat(getComputedStyle(track).getPropertyValue('--rs-inset'));
+      const inset = getComputedStyle(thumb).clipPath.split('round')[0].match(/-?[\d.]+/g).map(Number);
+      const right = inset[1] ?? inset[0];
+      const left = inset[3] ?? right;
+      return { left, right, expectedLeft: selected.left - bounds.left - padding, expectedRight: bounds.right - selected.right - padding };
+    };
+  });
+  await thumbAligned();
+  await page.evaluate(() => {
+    window.thumbSamples = [window.readNavigationThumb()];
+    const collect = () => {
+      window.thumbSamples.push(window.readNavigationThumb());
+      window.thumbFrame = requestAnimationFrame(collect);
+    };
+    window.thumbFrame = requestAnimationFrame(collect);
+  });
+  await manualScroll(selector, name, wheel);
+  await thumbAligned();
+  const { samples, reduced } = await page.evaluate(() => {
+    cancelAnimationFrame(window.thumbFrame);
+    return { samples: window.thumbSamples, reduced: matchMedia('(prefers-reduced-motion: reduce)').matches };
+  });
+  const distance = (a, b) => Math.abs(a.left - b.left) + Math.abs(a.right - b.right);
+  const first = samples[0];
+  const last = samples[samples.length - 1];
+  const intermediate = new Set(samples.filter(sample => distance(sample, first) > 1 && distance(sample, last) > 1).map(sample => `${sample.left.toFixed(1)},${sample.right.toFixed(1)}`));
+  if (reduced) assert.equal(intermediate.size, 0, 'Reduced-motion highlight must update without animation');
+  else assert(intermediate.size >= 3, `${name}: selection background snapped instead of animating (${intermediate.size} intermediate positions)`);
 }
 
 async function smoothNavigation(name, selector) {
@@ -78,7 +128,7 @@ try {
     await page.locator('.page-loader').waitFor({ state: 'detached', timeout: 15000 });
     await expect(page.locator('#about')).toHaveCSS('opacity', '1');
     await settledAt('#about');
-    await manualScroll('#projects', '프로젝트', true);
+    await animatedScroll('#projects', '프로젝트', true);
     await manualScroll('#contact', '연락');
     await manualScroll('#reading', '논문 기록');
     await expect(page.locator('.archive')).toHaveCount(0);
@@ -91,6 +141,12 @@ try {
     await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
     await selected('연락');
     await manualScroll('#about', '소개');
+    await openNavigation();
+    await page.evaluate(y => window.scrollTo({ top: y, behavior: 'instant' }), await destination('#reading'));
+    await selected('논문 기록');
+    await page.waitForTimeout(60);
+    await manualScroll('#about', '소개');
+    await thumbAligned();
     await smoothNavigation('프로젝트', '#projects');
     await smoothNavigation('연락', '#contact');
     await smoothNavigation('소개', '#about');
@@ -116,14 +172,14 @@ try {
     await settledAt('#projects');
     await expect(page.locator('main')).toHaveCSS('opacity', '1');
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'Horizontal overflow');
-    console.log(`PASS ${width}: scroll tracking without history changes, stable selection, continuous scroll, rapid selections, browser history, archive round trip`);
+    console.log(`PASS ${width}: animated section highlight, rapid reversal, scroll tracking, stable selection, continuous scroll, browser history, archive round trip`);
   }
 
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto(`${url}#about`);
   await page.locator('.page-loader').waitFor({ state: 'detached', timeout: 15000 });
   await settledAt('#about');
-  await manualScroll('#projects', '프로젝트');
+  await animatedScroll('#projects', '프로젝트');
   await manualScroll('#reading', '논문 기록');
   await manualScroll('#about', '소개');
   await choose('연락');
